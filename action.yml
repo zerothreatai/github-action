@@ -12,6 +12,10 @@ inputs:
     description: 'Set this true to wait for analysis to complete before finishing job.'
     required: false
     default: false
+  ON_PREM_PROXY_API_URL:
+    description: 'Set proxy url host to scan internal targets.'
+    required: false
+    default: ''
 runs:
   using: 'node20'
   main: 'dist/index.js'

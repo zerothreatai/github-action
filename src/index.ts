@@ -4,12 +4,13 @@ import axios from 'axios';
 async function run() {
     try {
         const token = core.getInput('ZT_TOKEN', { required: true });
+        const onPremProxyUrl = core.getInput('ON_PREM_PROXY_API_URL', { required: false });
         const waitForAnalysisInput = core.getInput('WAIT_FOR_ANALYSIS', { required: false });
         const waitForAnalysis = waitForAnalysisInput?.toLowerCase() === 'true';
         core.info(`Initiating security scan request`);
 
         // Initiate the scan
-        const apiUrl = `https://api.zerothreat.ai/api/scan/devops`;
+        const apiUrl = `${onPremProxyUrl || 'https://api.zerothreat.ai'}/api/scan/devops`;
         const initiateResponse = await axios.post(apiUrl, { token });
         const response = initiateResponse.data;
         const code = response.code;
@@ -22,7 +23,7 @@ async function run() {
             if(intervalId)
                 clearInterval(intervalId);
             try {
-                const axiosResponse = await axios.get(`https://api.zerothreat.ai/api/scan/devops/${code}`);
+                const axiosResponse = await axios.get(`${apiUrl}/${code}`);
                 const response = axiosResponse.data;
                 if (response.scanStatus >= 4) {
                     core.info(`Scan completed successfully.`);
